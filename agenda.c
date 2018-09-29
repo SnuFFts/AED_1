@@ -1,46 +1,65 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct agenda{
+typedef struct contato{
     char nome[30];
+    int id;
     int numero;
-    struct agenda *prox;
-}ag;
+    struct contato *next;
+}contato;
 
-void AddContato();
-void RemContato();
-void FindContato();
-void ListContato();
-void OptMenu(int *opt);
-void menu();
+void addcontato();
+void remcontato();
+void findcontato();
+void listcontato();
+void optsmenu(int *opt);
+void addlista(contato *novocontato);
+contato *initagenda();
 
 int main(){
-    void *buffer;
+    void *buffer,*bufferIN;
     int *optmenu;
+    contato *head;
+
     buffer=malloc(sizeof(int));
+    bufferIN=buffer;
     if(buffer==NULL)exit(1);
     optmenu=buffer;
-    
+    buffer+=4;
+    head=initagenda(buffer);
     while(*optmenu!=5){
-        menu();
+        printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n");
         scanf("%d", optmenu);
-        OptMenu(optmenu);
+        optsmenu(optmenu);
     }
 }
 
-void menu(){
-    printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n");
+void addlista(contato *novocontato){
+    contato *current=novocontato;
+    while(current->next!=NULL){
+        current=current->next;
+    }
+    current->next->next=NULL;
 }
 
-void OptMenu(int *opt){
+contato *initagenda(void *buffer){
+    contato *head;
+    head=buffer;
+    head->id=0;
+    head->numero=0;
+    return head;
+
+}
+
+void optsmenu(int *opt){
     switch(*opt){
-        case 1: AddContato();
+        case 1: addcontato();
         break;
-        case 2: RemContato();
+        case 2: remcontato();
         break;
-        case 3: FindContato();
+        case 3: findcontato();
         break;
-        case 4: ListContato();
+        case 4: listcontato();
         break;
         case 5: exit(1);
         default: printf("\nOpção não encontrada\n");
@@ -48,18 +67,19 @@ void OptMenu(int *opt){
     }
 }
 
-void AddContato(){
-    printf("\naddcontato\n");   
+void addcontato(){
+    printf("\naddcontato\n");
+    printf("%lu", sizeof(int));   
 }
 
-void RemContato(){
+void remcontato(){
     printf("\nremcontato\n");
 }
 
-void FindContato(){
+void findcontato(){
     printf("\nfindcontato\n");
 }
 
-void ListContato(){
+void listcontato(){
     printf("\nlistcontato\n");
 }
