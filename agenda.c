@@ -3,7 +3,6 @@
 
 typedef struct contato{
     char nome[30];
-    int id;
     int numero;
     struct contato *next;
 }contato;
@@ -17,26 +16,30 @@ void addlista(contato *novocontato, contato *head);
 contato *initagenda();
 
 int main(){
-    void *buffer,*bufferIN;
-    int *optmenu,*buffersize;
+    void *buffer,*temp;
+    int *optmenu;
     contato *head;
 
     buffer=malloc(sizeof(int));
     if(buffer==NULL)exit(1);
-    bufferIN=buffer;
-    buffersize=buffer;
-    *buffersize=4;
-    buffer+=4;
-    buffer=realloc(buffer,2*sizeof(int));
+    //printf("%p\n", buffer);
     optmenu=buffer;
-    buffer+=4;
-    
+    //temp=realloc(buffer,2*sizeof(int));
+    //buffer=temp;
     head=initagenda(buffer);
     while(*optmenu!=5){
         printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n");
         scanf("%d", optmenu);
+        getchar();
         optsmenu(optmenu);
+        printf("%p\n", buffer);
     }
+    free(buffer);
+    free(head);
+    free(temp);
+    free(optmenu);
+
+    printf("teste\n");
 }
 
 void addlista(contato *novocontato, contato *head){
@@ -46,12 +49,12 @@ void addlista(contato *novocontato, contato *head){
     }
     current->next=novocontato;
     novocontato->next=NULL;
+    free(current);
 }
 
 contato *initagenda(void *buffer){
     contato *head;
     head=buffer;
-    head->id=0;
     head->numero=0;
     buffer+=sizeof(contato);
     return head;
@@ -68,7 +71,7 @@ void optsmenu(int *opt){
         break;
         case 4: listcontato();
         break;
-        case 5: exit(1);
+        case 5: break;
         default: printf("\nOpção não encontrada\n");
 
     }
@@ -76,7 +79,7 @@ void optsmenu(int *opt){
 
 void addcontato(){
     printf("\naddcontato\n");
-    printf("%lu", sizeof(int));   
+    //printf("%lu", sizeof(int));   
 }
 
 void remcontato(){
