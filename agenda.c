@@ -1,10 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-typedef struct contato{
+typedef struct contato1{
     char nome[30];
     int numero;
-    struct contato *next;
+    struct contato1 *next;
 }contato;
 
 void addcontato();
@@ -14,36 +15,83 @@ void listcontato();
 void optsmenu(int *opt);
 void addlista(contato *novocontato, contato *head);
 contato *initagenda();
+contato *novo_contato(void *buffer);
+void printagenda(contato *head);
 
 int main(){
-    void *buffer,*temp;
-    int *optmenu;
-    contato *head;
-
-    buffer=malloc(sizeof(int));
+    void *buffer;
+    buffer=malloc(1000);
     if(buffer==NULL)exit(1);
-    //printf("%p\n", buffer);
-    optmenu=buffer;
-    //temp=realloc(buffer,2*sizeof(int));
-    //buffer=temp;
-    head=initagenda(buffer);
-    while(*optmenu!=5){
+    
+    void *temp;
+    int *optmenu;
+    contato *head,*novocontato;
+    
+    novocontato=malloc(sizeof(contato));
+    head=malloc(sizeof(contato));
+    //head=buffer;
+    head->next=NULL;
+    head->numero=999;
+    strcpy(head->nome,"head");
+    printf("%s\n", head->nome);
+    //optmenu=buffer;
+    //head=initagenda(buffer);
+
+    //buffer+=sizeof(contato);
+    //novocontato=buffer;
+    /*while(*optmenu!=5){
         printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n");
         scanf("%d", optmenu);
         getchar();
         optsmenu(optmenu);
         printf("%p\n", buffer);
-    }
-    free(buffer);
-    free(head);
-    free(temp);
-    free(optmenu);
+    }*/
 
-    printf("teste\n");
+    novocontato=novo_contato(buffer);
+    addlista(novocontato,head);
+    printagenda(head);
+    
+    //free(buffer);
+    //free(head);
+    //free(temp);
+    //free(optmenu);
+
+    printf("fim\n");
+}
+
+contato *novo_contato(void *buffer){
+    
+    contato *novocontato;
+    novocontato=malloc(sizeof(contato));
+    novocontato->next=NULL;
+    
+    printf("Novo nome:\n");
+    //fgets(novocontato->nome,30,stdin);
+    strcpy(novocontato->nome,"teste");
+    printf("Novo número:\n");
+    scanf("%d", &novocontato->numero);
+
+    return novocontato;
+
+}
+
+void printagenda(contato *head){
+    contato *iterator;
+    iterator=malloc(sizeof(contato));
+    iterator=head;
+    
+    while(iterator->next!=NULL){
+        printf("%s\n", iterator->nome);
+        printf("%d\n", iterator->numero);
+        iterator=iterator->next;
+    }
+    //free(iterator);
 }
 
 void addlista(contato *novocontato, contato *head){
-    contato *current=head;
+    contato *current;
+    current=malloc(sizeof(contato));
+    current=head;
     while(current->next!=NULL){
         current=current->next;
     }
@@ -54,9 +102,12 @@ void addlista(contato *novocontato, contato *head){
 
 contato *initagenda(void *buffer){
     contato *head;
+    head=malloc(sizeof(contato));
     head=buffer;
-    head->numero=0;
-    buffer+=sizeof(contato);
+    head->numero=99;
+    strcpy(head->nome,"head");
+    printf("%s\n", head->nome);
+    //buffer+=sizeof(contato);
     return head;
 
 }
@@ -78,8 +129,7 @@ void optsmenu(int *opt){
 }
 
 void addcontato(){
-    printf("\naddcontato\n");
-    //printf("%lu", sizeof(int));   
+    printf("\naddcontato\n");  
 }
 
 void remcontato(){
