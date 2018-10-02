@@ -66,10 +66,12 @@ contato *novo_contato(void *buffer){
     novocontato->next=NULL;
     
     printf("Novo nome:\n");
-    //fgets(novocontato->nome,30,stdin);
-    strcpy(novocontato->nome,"teste");
+    fgets(novocontato->nome,30,stdin);
+    //strcpy(novocontato->nome,"teste");
+    //printf("%s", novocontato->nome);
     printf("Novo número:\n");
     scanf("%d", &novocontato->numero);
+    //printf("%d", novocontato->numero);
 
     return novocontato;
 
@@ -77,7 +79,8 @@ contato *novo_contato(void *buffer){
 
 void printagenda(contato *head){
     contato *iterator;
-    iterator=malloc(sizeof(contato));
+    printf("%d", head->numero);
+    //iterator=malloc(sizeof(contato));
     iterator=head;
     
     while(iterator->next!=NULL){
@@ -90,7 +93,7 @@ void printagenda(contato *head){
 
 void addlista(contato *novocontato, contato *head){
     contato *current;
-    current=malloc(sizeof(contato));
+    //current=malloc(sizeof(contato));
     current=head;
     while(current->next!=NULL){
         current=current->next;
