@@ -26,7 +26,7 @@ contato *inithead();
 
 
 int main(){
-    printf("%lu\n", NAME_SIZE);
+    //printf("%lu\n", NAME_SIZE);
     contato *head;
     void *buffer,*temp;
     int *control;
@@ -35,16 +35,20 @@ int main(){
     head=malloc(NODE_SIZE);
     
     control=buffer;
-    printf("%lu\n", NODE_SIZE);
-    printf("%p\n", buffer);
+    printf("size of list node: %lu\n", NODE_SIZE);
+    //printf("%p\n", buffer);
     buffer+=INT_SIZE;
-    printf("%p\n", buffer);
+    //printf("%p\n", buffer);
     
     head=buffer;
-    head=inithead();
+    head->num=0;
+    strcpy(head->name,"head");
+    head->next=NULL;
     buffer+=NODE_SIZE;
+    //head=buffer;
+    //buffer+=NODE_SIZE;
     //printf("%lu\n", sizeof(int));
-    printf("%p\n", buffer);
+    //printf("%p\n", buffer);
     
     
     while(*control!=5){
@@ -75,38 +79,24 @@ void addtolistend(contato *head, void *buffer){
     stemp=malloc(NAME_SIZE);
     temp=malloc(NODE_SIZE);
     newcontato=malloc(NODE_SIZE);
+
+    newcontato=buffer;
+    printf("type name:\n");
+    fgets(stemp,30,stdin);
+    strcpy(newcontato->name,stemp);
+    newcontato->name[strlen(newcontato->name)-1]='\0';
+    
+    printf("type num:\n");
+    scanf("%d", &newcontato->num);
+    getchar();
+    buffer+=NODE_SIZE;
+    newcontato->next=NULL;
     
     temp=head;
     while(temp->next!=NULL){
         temp=temp->next;
     }
-    temp->next=newcontato;
-
-    newcontato=buffer;
-    printf("type name:\n");
-    fgets(stemp,30,stdin);
-    stemp[strlen(stemp)-1]='\0';
-    strcpy(newcontato->name,stemp);
-    buffer+=NAME_SIZE;
-    
-    printf("type v:\n");
-    scanf("%d", &newcontato->num);
-    getchar();
-    buffer+=INT_SIZE;
-    
-    newcontato->next=NULL;
-    buffer+=POINTER_SIZE;
-    
-    free(temp);
-}
-
-contato *inithead(){
-    contato *head;
-    head=malloc(NODE_SIZE);
-    head->num=0;
-    strcpy(head->name,"head");
-    head->next=NULL;
-    return head;
+    temp->next=newcontato;;
 }
 
 void selectmenu(int *control, contato *head,void *buffer){
