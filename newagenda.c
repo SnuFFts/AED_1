@@ -27,7 +27,6 @@ contato *head;
 int main(){
     void *temp;
     int *control;
-    //printf("size of list node: %lu\n", NODE_SIZE);
     buffer=malloc(NODE_SIZE*10);
     control=buffer;
     buffer+=INT_SIZE;
@@ -35,7 +34,7 @@ int main(){
     buffer+=NODE_SIZE;
 
     while(*control!=5){
-        printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção:");
+        printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção: ");
         scanf("%d", control);
         getchar();
         selectmenu(control);
@@ -63,18 +62,25 @@ void selectmenu(int *control){
 
 void addcontato(){
     contato *temp;
-    printf("\naddcontato\n");
     contato *newcontato;
+    temp=malloc(NODE_SIZE);
+    newcontato=malloc(NODE_SIZE);
     newcontato=buffer;
+    temp=head;
 
+    printf("Nome: ");
     fgets(newcontato->name,30,stdin);
     newcontato->name[strlen(newcontato->name)-1]='\0';
+    printf("Número: ");
     scanf("%d", &newcontato->num);
     getchar();
     newcontato->next=NULL;
     buffer+=NODE_SIZE;
 
-
+    while(temp->next!=NULL){
+        temp=temp->next;
+    }
+    temp->next=newcontato;
 }
 
 void remcontato(){
@@ -86,7 +92,8 @@ void findcontato(){
 }
 
 void listcontato(){
-    printf("\nlistcontato\n");
+    //printf("\nlistcontato\n");
+    printlist();
 }
 
 void inithead(){
@@ -101,6 +108,7 @@ void printlist(){
     contato *temp;
     temp=malloc(NODE_SIZE);
     temp=head;
+    temp=temp->next;
     while(temp!=NULL){
         printf("%s\n", temp->name);
         printf("%d\n", temp->num);
