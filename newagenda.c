@@ -5,6 +5,7 @@
 //#define POINTER_SIZE sizeof(int*)
 #define INT_SIZE sizeof(int)
 #define NODE_SIZE sizeof(contato)
+#define CONTROL_SIZE sizeof(controle)
 
 typedef struct __attribute__((__packed__)) contato{
     char name[30];
@@ -12,27 +13,33 @@ typedef struct __attribute__((__packed__)) contato{
     struct contato *next;
 }contato;
 
+typedef struct __attribute__((__packed__)) controle{
+    contato *temp;
+    contato *it;
+    contato *it2;
+}controle;
 
 void addcontato();
 void remcontato();
 void findcontato();
-void listcontato();
 void inithead();
 void printlist();
 void selectmenu(int *control);
 
 void *buffer;
+void *iBuffer;
 contato *head;
 int *numcontatos;
 
 int main(){
     void *temp;
-    int *control;
+    int *controlmenu;
     buffer=malloc(NODE_SIZE*100);
-    control=malloc(INT_SIZE);
+    iBuffer = buffer;
+    controlmenu=malloc(INT_SIZE);
     numcontatos=malloc(INT_SIZE);
 
-    control=buffer;
+    controlmenu=buffer;
     temp=buffer;
     buffer+=INT_SIZE;
     numcontatos=buffer;
@@ -41,27 +48,28 @@ int main(){
     inithead();
     buffer+=NODE_SIZE;
 
-    while(*control!=5){
+    while(*controlmenu!=5){
         printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção: ");
-        scanf("%d", control);
+        scanf("%d", controlmenu);
         getchar();
-        selectmenu(control);
+        selectmenu(controlmenu);
     }
 
-    printlist();
-
+    //free(buffer);
+    //free(head);
+    free(iBuffer);
 }
 
-void selectmenu(int *control){
-    switch(*control){
+void selectmenu(int *controlmenu){
+    switch(*controlmenu){
         case 1: addcontato();
-        break;
+            break;
         case 2: remcontato();
-        break;
+            break;
         case 3: findcontato();
-        break;
-        case 4: listcontato();
-        break;
+            break;
+        case 4: printlist();
+            break;
         case 5: break;
         default: printf("\nOpção não encontrada\n");
 
@@ -95,25 +103,50 @@ void addcontato(){
 }
 
 void remcontato(){
-    //printf("\nremcontato\n");
-}
-
-void findcontato(){
-    contato *temp;
-    temp=mallloc(NODE_SIZE);
+    contato *temp,*it,*it2;
+    temp=malloc(NODE_SIZE);
+    it=malloc(NODE_SIZE);
+    it2=malloc(NODE_SIZE);
+    it=head;
+    it=it->next;
     printf("Nome: ");
     fgets(temp->name,30,stdin);
     temp->name[strlen(temp->name)-1]='\0';
+
+    while(it!=NULL){
+        if(strcmp(temp->name,it->name)==0){
+            break;
+        }
+        it2=it;
+        it=it->next;
+    }
+    it=it->next;
+    it2->next=it;
 }
 
-void listcontato(){
-    //printf("\nlistcontato\n");
-    printlist();
+void findcontato(){
+    contato *temp,*it;
+    temp=malloc(NODE_SIZE);
+    it=malloc(NODE_SIZE);
+    it=head;
+    it=it->next;
+    printf("Nome: ");
+    fgets(temp->name,30,stdin);
+    temp->name[strlen(temp->name)-1]='\0';
+
+    while(it!=NULL){
+        if(strcmp(temp->name,it->name)==0){
+            printf("%s\n", it->name);
+            printf("%d\n", it->num);
+        }
+        it=it->next;
+    }
+
 }
 
 void inithead(){
-    head=buffer;
     head=malloc(NODE_SIZE);
+    head=buffer;
     strcpy(head->name,"head");
     head->num=0;
     head->next=NULL;
@@ -131,4 +164,5 @@ void printlist(){
         printf("%d\n", temp->num);
         temp=temp->next;
     }
+    printf("Total de contatos: %d\n", *numcontatos);
 }
