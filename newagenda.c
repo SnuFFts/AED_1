@@ -27,6 +27,7 @@ void findcontato();
 void inithead();
 void printlist();
 void selectmenu(int *control);
+void loadtest();
 
 void *buffer;
 controle *pointerctrl;
@@ -41,6 +42,7 @@ int main(){
     buffer+=NODE_SIZE;
     pointerctrl->numcontatos=0;
     buffer+=NODE_SIZE;
+    loadtest();
 
     while(pointerctrl->controlmenu!=5){
         printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção: ");
@@ -144,8 +146,40 @@ void printlist(){
     
     while(pointerctrl->temp!=NULL){
         printf("Nome: %s\n", pointerctrl->temp->name);
-        printf("Número: %d\n", pointerctrl->temp->num);
+        printf("Número: %d\n\n", pointerctrl->temp->num);
         pointerctrl->temp=pointerctrl->temp->next;
     }
     printf("Total de contatos: %d\n", pointerctrl->numcontatos);
+}
+
+void loadtest(){
+    FILE *fp;
+    int testnum,i;
+    char testname[30];
+    fp=fopen("test.txt","r");
+    for(i=0;i<20;i++){
+        fscanf(fp,"%s",testname);
+        //getchar();
+        fscanf(fp,"%d",&testnum);
+        //getchar();
+
+        pointerctrl->numcontatos+=1;
+        pointerctrl->temp=malloc(NODE_SIZE);
+        pointerctrl->newcontato=buffer;
+        pointerctrl->temp=pointerctrl->head;
+
+        strcpy(pointerctrl->newcontato->name,testname);
+        pointerctrl->newcontato->name[strlen(pointerctrl->newcontato->name)-1]='\0';
+        pointerctrl->newcontato->num=testnum;
+        pointerctrl->newcontato->next=NULL;
+
+        while(pointerctrl->temp->next!=NULL){
+            pointerctrl->temp=pointerctrl->temp->next;
+        }
+        pointerctrl->temp->next=pointerctrl->newcontato;
+
+        buffer+=NODE_SIZE;
+
+    }
+    //printf("%s %d", testname,testnum);
 }
