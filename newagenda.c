@@ -12,6 +12,7 @@ typedef struct __attribute__((__packed__)) contato{
 }contato;
 
 typedef struct __attribute__((__packed__)) controle{
+    void *bufferin;
     int numcontatos;
     int controlmenu;
     contato *head;
@@ -33,7 +34,7 @@ void *buffer;
 controle *pointerctrl;
 
 int main(){
-    buffer=malloc(CONTROL_SIZE+NODE_SIZE*100);
+    buffer=malloc(CONTROL_SIZE+NODE_SIZE);
     pointerctrl=malloc(CONTROL_SIZE);
     pointerctrl=buffer;
     buffer+=CONTROL_SIZE;
@@ -41,8 +42,7 @@ int main(){
     inithead();
     buffer+=NODE_SIZE;
     pointerctrl->numcontatos=0;
-    buffer+=NODE_SIZE;
-    loadtest();
+    //loadtest();
 
     while(pointerctrl->controlmenu!=5){
         printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção: ");
@@ -54,6 +54,23 @@ int main(){
     //free(buffer);
     //free(head);
     //free();
+}
+
+void reallocbuffer(){
+    buffer=realloc(buffer,CONTROL_SIZE+(NODE_SIZE*pointerctrl->numcontatos));
+    pointerctrl=buffer;
+    pointerctrl->bufferin=buffer;
+    buffer+=CONTROL_SIZE;
+    pointerctrl->head=buffer;
+    buffer+=NODE_SIZE;
+    pointerctrl->temp=malloc(NODE_SIZE);
+    pointerctrl->temp=pointerctrl->head;
+    while(pointerctrl->temp!=NULL){
+        pointerctrl->temp=buffer;
+        pointerctrl->temp=pointerctrl->temp->next;
+        buffer+=NODE_SIZE;
+    }
+    
 }
 
 void selectmenu(int *controlmenu){
@@ -74,6 +91,7 @@ void selectmenu(int *controlmenu){
 
 void addcontato(){
     pointerctrl->numcontatos+=1;
+    reallocbuffer();
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->newcontato=buffer;
     pointerctrl->temp=pointerctrl->head;
