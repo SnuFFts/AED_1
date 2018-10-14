@@ -5,32 +5,57 @@
 int *test1,*test2,*test3,*testalmost,*testreversed,*finaltest;
 int i,j;
 
+void mallocall();
 void loadtest();
 void printtest();
 void insertionsort(int *array, int size);
-void printresult(int *array,int size);
+void bubblesort(int *array, int size);
+void printresult(int *array, int size);
 
 int main(){
-    test1=malloc(INT_SIZE);
-    test2=malloc(INT_SIZE*2);
-    test3=malloc(INT_SIZE*3);
-    testalmost=malloc(INT_SIZE*10);
-    testreversed=malloc(INT_SIZE*10);
-    finaltest=malloc(INT_SIZE*10);
+    mallocall();
     loadtest();
-    //printtest();
+    printf("Test arrays:\n");
+    printtest();
+    printf("\nInsertion sort:\n");
     insertionsort(test1,1);
     insertionsort(test2,2);
     insertionsort(test3,3);
     insertionsort(testalmost,10);
     insertionsort(testreversed,10);
     insertionsort(finaltest,10);
+    mallocall();
+    loadtest();
+    printf("\nBubble sort:\n");
+    bubblesort(test1,1);
+    bubblesort(test2,2);
+    bubblesort(test3,3);
+    bubblesort(testalmost,10);
+    bubblesort(testreversed,10);
+    bubblesort(finaltest,10);
 
     
 }
 
+void bubblesort(int *array, int size){
+    int temp;
+    i=0;j=0;
+    for(i=0;i<size-1;i++){
+        for(j=0;j<size-i-1;j++){
+            if(array[j]>array[j+1]){
+                temp=array[j];
+                array[j]=array[j+1];
+                array[j+1]=temp;
+
+            }
+        }
+    }
+    printresult(array,size);
+}
+
 void insertionsort(int *array, int size){
     int temp;
+    i=0;j=0;
     for(i=1;i<size;i++){
         j=i;
         while(j>0 && array[j-1]>array[j]){
@@ -41,8 +66,6 @@ void insertionsort(int *array, int size){
         }
     }
     printresult(array,size);
-    i=0;
-    j=0;
 }
 
 void loadtest(){
@@ -50,23 +73,23 @@ void loadtest(){
     FILE *fp;
     fp=fopen("sorttest.txt","r");
     fscanf(fp,"%d",test1);
-    fscanf(fp,"%c",bp);
+    //fscanf(fp,"%c",bp);
     for(i=0;i<2;i++){
         fscanf(fp,"%d",&test2[i]);
     }
-    fscanf(fp,"%c",bp);
+    //fscanf(fp,"%c",bp);
     for(i=0;i<3;i++){
         fscanf(fp,"%d",&test3[i]);
     }
-    fscanf(fp,"%c",bp);
+    //fscanf(fp,"%c",bp);
     for(i=0;i<10;i++){
         fscanf(fp,"%d",&testalmost[i]);
     }
-    fscanf(fp,"%c",bp);
+    //fscanf(fp,"%c",bp);
     for(i=0;i<10;i++){
         fscanf(fp,"%d",&testreversed[i]);
     }
-    fscanf(fp,"%c",bp);
+    //fscanf(fp,"%c",bp);
     for(i=0;i<10;i++){
         fscanf(fp,"%d",&finaltest[i]);
     }
@@ -103,4 +126,13 @@ void printresult(int *array,int size){
         printf("%d ",array[i]);
     }
     printf("\n");
+}
+
+void mallocall(){
+    test1=malloc(INT_SIZE);
+    test2=malloc(INT_SIZE*2);
+    test3=malloc(INT_SIZE*3);
+    testalmost=malloc(INT_SIZE*10);
+    testreversed=malloc(INT_SIZE*10);
+    finaltest=malloc(INT_SIZE*10);
 }
