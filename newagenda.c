@@ -14,7 +14,10 @@ typedef struct __attribute__((__packed__)) contato{
 typedef struct __attribute__((__packed__)) controle{
     void *bufferin;
     int numcontatos;
-    int controlmenu;
+    int control;
+    int i;
+    int j;
+    int inttemp;
     contato *head;
     contato *newcontato;
     contato *temp;
@@ -29,6 +32,8 @@ void inithead();
 void printlist();
 void selectmenu(int *control);
 void loadtest();
+void ordermenu();
+void algorithmsmenu();
 
 void *buffer;
 controle *pointerctrl;
@@ -37,6 +42,7 @@ int main(){
     buffer=malloc(CONTROL_SIZE+NODE_SIZE);
     pointerctrl=malloc(CONTROL_SIZE);
     pointerctrl=buffer;
+    pointerctrl->bufferin=buffer;
     buffer+=CONTROL_SIZE;
     pointerctrl->head=buffer;
     inithead();
@@ -44,20 +50,17 @@ int main(){
     pointerctrl->numcontatos=0;
     //loadtest();
 
-    while(pointerctrl->controlmenu!=5){
-        printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Sair\n\nSelecione uma opção: ");
-        scanf("%d", &pointerctrl->controlmenu);
+    while(pointerctrl->control!=5){
+        printf("\n1-Adicionar Contato\n2-Remover Contato\n3-Buscar Contato\n4-Listar Contatos\n5-Ordenar Contatos\n6-Sair\n\nSelecione uma opção: ");
+        scanf("%d", &pointerctrl->control);
         getchar();
-        selectmenu(&pointerctrl->controlmenu);
+        selectmenu(&pointerctrl->control);
     }
-
-    //free(buffer);
-    //free(head);
-    //free();
 }
 
 void reallocbuffer(){
-    buffer=realloc(buffer,CONTROL_SIZE+(NODE_SIZE*pointerctrl->numcontatos));
+    buffer=pointerctrl->bufferin;
+    buffer=realloc(buffer,CONTROL_SIZE+(NODE_SIZE*(pointerctrl->numcontatos)));
     pointerctrl=buffer;
     pointerctrl->bufferin=buffer;
     buffer+=CONTROL_SIZE;
@@ -66,7 +69,6 @@ void reallocbuffer(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->temp=pointerctrl->head;
     while(pointerctrl->temp!=NULL){
-        pointerctrl->temp=buffer;
         pointerctrl->temp=pointerctrl->temp->next;
         buffer+=NODE_SIZE;
     }
@@ -83,9 +85,39 @@ void selectmenu(int *controlmenu){
             break;
         case 4: printlist();
             break;
-        case 5: break;
+        case 5: ordermenu();
+            break;
+        case 6: break;
         default: printf("\nOpção não encontrada\n");
 
+    }
+}
+
+void ordermenu(){
+    printf("Ordernar por:\n1-Nome\n2-Número");
+    scanf("%d",&pointerctrl->control);
+    getchar();
+    switch(pointerctrl->control){
+        case 1:
+            break;
+        case 2:
+            algorithmsmenu();
+        default: printf("\nOpção não encontrada\n");
+    }
+}
+
+void algorithmsmenu(){
+    printf("1-Insertion Sort\n2-Bubble Sort\n3-Quick Sort");
+    scanf("%d", &pointerctrl->control);
+    getchar();
+    switch(pointerctrl->control){
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+        default: printf("\nOpção não encontrada\n");
     }
 }
 
@@ -108,11 +140,11 @@ void addcontato(){
         pointerctrl->temp=pointerctrl->temp->next;
     }
     pointerctrl->temp->next=pointerctrl->newcontato;
-    
-    buffer+=NODE_SIZE;
 }
 
 void remcontato(){
+    pointerctrl->numcontatos-=1;
+    reallocbuffer();
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
     pointerctrl->it=pointerctrl->it->next;
@@ -199,5 +231,4 @@ void loadtest(){
         buffer+=NODE_SIZE;
 
     }
-    //printf("%s %d", testname,testnum);
 }
