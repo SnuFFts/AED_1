@@ -12,6 +12,8 @@ typedef struct __attribute__((__packed__)) contato{
     struct contato *prev;
 }contato;
 
+
+
 typedef struct __attribute__((__packed__)) controle{
     void *bufferin;
     int numcontatos;
@@ -23,7 +25,6 @@ typedef struct __attribute__((__packed__)) controle{
     contato *newcontato;
     contato *temp;
     contato *it;
-    contato *it2;
 }controle;
 
 void addcontato();
@@ -35,6 +36,7 @@ void selectmenu(int control);
 void loadtest();
 void ordermenu();
 void algorithmsmenu();
+void bubblesort();
 
 void *buffer;
 controle *pointerctrl;
@@ -116,7 +118,7 @@ void algorithmsmenu(){
     switch(pointerctrl->control){
         case 1:
             break;
-        case 2:
+        case 2: bubblesort();
             break;
         case 3:
             break;
@@ -125,15 +127,18 @@ void algorithmsmenu(){
     }
 }
 
-void insertionsort(){
-    pointerctrl->i=0;
-    pointerctrl->j=0;
-    pointerctrl->temp=pointerctrl->head;
-    pointerctrl->temp=pointerctrl->temp->next;
+void bubblesort(){
+    pointerctrl->it=pointerctrl->head;
+    for(pointerctrl->i=0 ; pointerctrl->i < pointerctrl->numcontatos-1 ; pointerctrl->i++){
+        for(pointerctrl->j=0 ; pointerctrl->j < pointerctrl->numcontatos-pointerctrl->i-1 ; pointerctrl->i++){
+            pointerctrl->it=pointerctrl->it->next;
+            if(pointerctrl->it->num > pointerctrl->it->next->num){
+                pointerctrl->temp=pointerctrl->it;
+                pointerctrl->temp->next=pointerctrl->it->next;
+                pointerctrl->temp->prev=pointerctrl->it->next;
+            }
+        }
 
-    for(pointerctrl->i=1;pointerctrl->i<pointerctrl->numcontatos;pointerctrl->i++){
-        pointerctrl->j=pointerctrl->i;
-        //while(pointerctrl->j>0 &&)
     }
 }
 
@@ -178,12 +183,10 @@ void remcontato(){
         if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
             break;
         }
-        pointerctrl->it2=pointerctrl->it;
         pointerctrl->it=pointerctrl->it->next;
     }
-    pointerctrl->it=pointerctrl->it->next;
-    pointerctrl->it2->next=pointerctrl->it;
-    pointerctrl->numcontatos-=1;
+    pointerctrl->it->prev->next=pointerctrl->it->next;
+    pointerctrl->it->next->prev=pointerctrl->it->prev;
 }
 
 void findcontato(){
