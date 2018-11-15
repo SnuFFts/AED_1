@@ -20,10 +20,13 @@ typedef struct __attribute__((__packed__)) controle{
     int control;
     int i;
     int j;
-    int inttemp;
+    int indexit;
     contato *head;
     contato *newcontato;
+    contato *swaptemp;
     contato *temp;
+    contato *temp2;
+    contato *temp3;
     contato *it;
 }controle;
 
@@ -37,6 +40,7 @@ void loadtest();
 void ordermenu();
 void algorithmsmenu();
 void bubblesort();
+void copynodes(contato *c1, contato *c2);
 
 void *buffer;
 controle *pointerctrl;
@@ -78,7 +82,6 @@ void reallocbuffer(){
     pointerctrl->bufferin=buffer;
     buffer+=CONTROL_SIZE;
     pointerctrl->head=buffer;
-    pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->temp=pointerctrl->head;
     while(pointerctrl->temp!=NULL){
         buffer+=NODE_SIZE;
@@ -127,16 +130,33 @@ void algorithmsmenu(){
     }
 }
 
+void copynodes(contato *c1, contato *c2){
+    for(pointerctrl->indexit=0;pointerctrl->indexit<30;pointerctrl->indexit++){
+        c2->name[pointerctrl->indexit]=c1->name[pointerctrl->indexit];
+    }
+    c2->num=c1->num;
+}
+
+void swap(contato *c1, contato *c2){
+    pointerctrl->swaptemp=malloc(NODE_SIZE);
+    copynodes(c1,pointerctrl->swaptemp);
+    copynodes(c2,c1);
+    copynodes(pointerctrl->swaptemp,c2);
+}
+
 void bubblesort(){
-    pointerctrl->it=pointerctrl->head;
+    pointerctrl->temp2=malloc(NODE_SIZE);
+    pointerctrl->temp3=malloc(NODE_SIZE);
+    pointerctrl->it=pointerctrl->head->next;
     for(pointerctrl->i=0 ; pointerctrl->i < pointerctrl->numcontatos-1 ; pointerctrl->i++){
-        for(pointerctrl->j=0 ; pointerctrl->j < pointerctrl->numcontatos-pointerctrl->i-1 ; pointerctrl->i++){
+        for(pointerctrl->j=0 ; pointerctrl->j < pointerctrl->numcontatos-pointerctrl->i-1 ; pointerctrl->j++){
             pointerctrl->it=pointerctrl->it->next;
             if(pointerctrl->it->num > pointerctrl->it->next->num){
-                pointerctrl->temp=pointerctrl->it;
-                pointerctrl->temp->next=pointerctrl->it->next;
-                pointerctrl->temp->prev=pointerctrl->it->next;
+                copynodes(pointerctrl->it,pointerctrl->temp2);
+                copynodes(pointerctrl->it->next,pointerctrl->temp3);
+                swap(pointerctrl->temp2,pointerctrl->temp3);
             }
+        
         }
 
     }
@@ -145,7 +165,6 @@ void bubblesort(){
 void addcontato(){
     pointerctrl->numcontatos+=1;
     reallocbuffer();
-    pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->newcontato=buffer;
     pointerctrl->temp=pointerctrl->head;
     
@@ -171,7 +190,6 @@ void addcontato(){
 }
 
 void remcontato(){
-    pointerctrl->numcontatos-=1;
     reallocbuffer();
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
@@ -181,12 +199,15 @@ void remcontato(){
     pointerctrl->temp->name[strlen(pointerctrl->temp->name)-1]='\0';
     while(pointerctrl->it!=NULL){
         if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
+            pointerctrl->i=1;
+            pointerctrl->numcontatos-=1;
+            pointerctrl->it->prev->next=pointerctrl->it->next;
+            if(pointerctrl->it->next!=NULL)pointerctrl->it->next->prev=pointerctrl->it->prev;
             break;
         }
         pointerctrl->it=pointerctrl->it->next;
     }
-    pointerctrl->it->prev->next=pointerctrl->it->next;
-    pointerctrl->it->next->prev=pointerctrl->it->prev;
+    if(pointerctrl->i!=1)printf("Contato não encontrado\n");
 }
 
 void findcontato(){
@@ -215,7 +236,6 @@ void inithead(){
 }
 
 void printlist(){
-    pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->temp=pointerctrl->head;
     pointerctrl->temp=pointerctrl->temp->next;
     while(pointerctrl->temp!=NULL){
