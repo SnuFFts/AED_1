@@ -55,9 +55,9 @@ int main(){
     inithead();
     buffer+=NODE_SIZE;
     pointerctrl->numcontatos=0;
-    loadtest();
+    //loadtest();
     while(pointerctrl->control!=6){
-        printf("-------------------------------------\n");
+        printf("\n-------------------------------------\n");
         printf("        1-Adicionar Contato\n");
         printf("        2-Remover Contato\n");
         printf("        3-Buscar Contato\n");
@@ -68,6 +68,7 @@ int main(){
         printf("Selecione uma opção: ");
         scanf("%d", &pointerctrl->control);
         getchar();
+        printf("\n");
         selectmenu(pointerctrl->control);
     }
     buffer=pointerctrl->bufferin;
@@ -245,8 +246,8 @@ void inithead(){
 }
 
 void printlist(){
-    pointerctrl->temp=pointerctrl->head;
-    pointerctrl->temp=pointerctrl->temp->next;
+    pointerctrl->temp=pointerctrl->head->next;
+    //pointerctrl->temp=pointerctrl->temp->next;
     while(pointerctrl->temp!=NULL){
         printf("Nome: %s\n", pointerctrl->temp->name);
         printf("Número: %d\n\n", pointerctrl->temp->num);
@@ -258,7 +259,8 @@ void printlist(){
         printf("Número: %d\n\n", pointerctrl->temp->num);
         pointerctrl->temp=pointerctrl->temp->prev;
     }*/
-    printf("Total de contatos: %d\n", pointerctrl->numcontatos);
+    if(pointerctrl->numcontatos==0)printf("Agenda vazia\n");
+    else printf("Total de contatos: %d\n", pointerctrl->numcontatos);
 }
 
 void loadtest(){
