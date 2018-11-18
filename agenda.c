@@ -1,33 +1,10 @@
+#include "structs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #define INT_SIZE sizeof(int)
 #define NODE_SIZE sizeof(contato)
 #define CONTROL_SIZE sizeof(controle)
-
-typedef struct __attribute__((__packed__)) contato{
-    char name[30];
-    int num;
-    struct contato *next;
-    struct contato *prev;
-}contato;
-
-
-
-typedef struct __attribute__((__packed__)) controle{
-    void *bufferin;
-    int numcontatos;
-    int control;
-    int i;
-    int j;
-    int k;
-    int indexit;
-    contato *head;
-    contato *newcontato;
-    contato *swaptemp;
-    contato *temp;
-    contato *it;
-}controle;
 
 void addcontato();
 void remcontato();
@@ -43,8 +20,8 @@ void insertionsort();
 void swap(contato *c1, contato *c2);
 void copynodes(contato *copy1, contato *copy2);
 
-void *buffer;
 controle *pointerctrl;
+void *buffer;
 
 int main(){
     buffer=malloc(CONTROL_SIZE+NODE_SIZE);
