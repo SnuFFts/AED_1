@@ -9,6 +9,7 @@ typedef struct __attribute__((__packed__)) contato{
 
 typedef struct __attribute__((__packed__)) controle{
     void *bufferin;
+    int buffersize;
     int numcontatos;
     int control;
     int i;

@@ -2,9 +2,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #define INT_SIZE sizeof(int)
 #define NODE_SIZE sizeof(contato)
 #define CONTROL_SIZE sizeof(controle)
+#define CONTROL_BYTES NODE_SIZE+7*4+1
 
 void addcontato();
 void remcontato();
@@ -32,7 +34,8 @@ int main(){
     inithead();
     buffer+=NODE_SIZE;
     pointerctrl->numcontatos=0;
-    //loadtest();
+    pointerctrl->buffersize=CONTROL_BYTES+NODE_SIZE;
+    loadtest();
     while(pointerctrl->control!=6){
         printf("\n-------------------------------------\n");
         printf("        1-Adicionar Contato\n");
@@ -41,6 +44,7 @@ int main(){
         printf("        4-Listar Contatos\n");
         printf("        5-Ordenar Contatos\n");
         printf("        6-Sair\n");
+        printf("\n        Buffer size: %d\n",pointerctrl->buffersize);
         printf("-------------------------------------\n");
         printf("Selecione uma opção: ");
         scanf("%d", &pointerctrl->control);
@@ -174,6 +178,7 @@ void addcontato(){
     pointerctrl->temp->next=pointerctrl->newcontato;
     pointerctrl->newcontato->prev=pointerctrl->temp;
     pointerctrl->newcontato->next=NULL;
+    pointerctrl->buffersize+=NODE_SIZE;
 }
 
 void remcontato(){
@@ -195,6 +200,7 @@ void remcontato(){
     }
     if(pointerctrl->i!=1)printf("Contato não encontrado\n");
     reallocbuffer();
+    pointerctrl->buffersize-=NODE_SIZE;
 }
 
 void findcontato(){
@@ -265,4 +271,5 @@ void loadtest(){
         pointerctrl->newcontato->next=NULL;
         buffer+=NODE_SIZE;
     }
+    pointerctrl->buffersize+=NODE_SIZE*20;
 }
