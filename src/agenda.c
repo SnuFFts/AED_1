@@ -1,26 +1,27 @@
 #include "structs.h"
+#include "stack.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define INT_SIZE sizeof(int)
-#define NODE_SIZE sizeof(contato)
+#define NODE_SIZE sizeof(node)
 #define CONTROL_SIZE sizeof(controle)
-#define CONTROL_BYTES NODE_SIZE+7*4+1
+#define CONTROL_BYTES NODE_SIZE+7*4+1+sizeof(Stack)
 
-void addcontato();
-void remcontato();
-void findcontato();
+void addnode();
+void rmnode();
+void findnode();
 void inithead();
-void printlist();
+void printagenda();
 void selectmenu(int control);
 void loadtest();
 void ordermenu();
 void algorithmsmenu();
 void bubblesort();
 void insertionsort();
-void swap(contato *c1, contato *c2);
-void copynodes(contato *copy1, contato *copy2);
+void swapnodes(node *c1, node *c2);
+void copynodes(node *copy1, node *copy2);
 
 controle *pointerctrl;
 void *buffer;
@@ -33,16 +34,16 @@ int main(){
     buffer+=CONTROL_SIZE;
     inithead();
     buffer+=NODE_SIZE;
-    pointerctrl->numcontatos=0;
+    pointerctrl->numnodes=0;
     pointerctrl->buffersize=CONTROL_BYTES+NODE_SIZE;
-    loadtest();
+    //loadtest();
     while(pointerctrl->control!=6){
         printf("\n-------------------------------------\n");
-        printf("        1-Adicionar Contato\n");
-        printf("        2-Remover Contato\n");
-        printf("        3-Buscar Contato\n");
-        printf("        4-Listar Contatos\n");
-        printf("        5-Ordenar Contatos\n");
+        printf("        1-Adicionar contato\n");
+        printf("        2-Remover contato\n");
+        printf("        3-Buscar contato\n");
+        printf("        4-Listar contatos\n");
+        printf("        5-Ordenar contatos\n");
         printf("        6-Sair\n");
         printf("\n        Buffer size: %d\n",pointerctrl->buffersize);
         printf("-------------------------------------\n");
@@ -58,7 +59,7 @@ int main(){
 
 void reallocbuffer(){
     buffer=pointerctrl->bufferin;
-    buffer=realloc(buffer,CONTROL_SIZE+NODE_SIZE*(pointerctrl->numcontatos+1));
+    buffer=realloc(buffer,CONTROL_SIZE+NODE_SIZE*(pointerctrl->numnodes+1));
     pointerctrl=buffer;
     pointerctrl->bufferin=buffer;
     buffer+=CONTROL_SIZE;
@@ -69,22 +70,21 @@ void reallocbuffer(){
         pointerctrl->temp=pointerctrl->temp->next;
         buffer+=NODE_SIZE;
     }
-    //free(pointerctrl->temp);
 }
 
 void selectmenu(int control){
     switch(control){
         case 1: 
-            addcontato();
+            addnode();
             break;
         case 2: 
-            remcontato();
+            rmnode();
             break;
         case 3: 
-            findcontato();
+            findnode();
             break;
         case 4: 
-            printlist();
+            printagenda();
             break;
         case 5: 
             algorithmsmenu();
@@ -114,14 +114,14 @@ void algorithmsmenu(){
     }
 }
 
-void copynodes(contato *copy1, contato *copy2){
+void copynodes(node *copy1, node *copy2){
     for(pointerctrl->indexit=0;pointerctrl->indexit<30;pointerctrl->indexit++){
         copy2->name[pointerctrl->indexit]=copy1->name[pointerctrl->indexit];
     }
     copy2->num=copy1->num;
 }
 
-void swap(contato *c1, contato *c2){
+void swapnodes(node *c1, node *c2){
     pointerctrl->swaptemp=malloc(NODE_SIZE);
     copynodes(c1,pointerctrl->swaptemp);
     copynodes(c2,c1);
@@ -130,10 +130,10 @@ void swap(contato *c1, contato *c2){
 
 void bubblesort(){
     pointerctrl->it=pointerctrl->head->next;
-    for(pointerctrl->i=0;pointerctrl->i<pointerctrl->numcontatos-1;pointerctrl->i++){
-        for(pointerctrl->j=0;pointerctrl->j<pointerctrl->numcontatos-pointerctrl->i-1;pointerctrl->j++){
+    for(pointerctrl->i=0;pointerctrl->i<pointerctrl->numnodes-1;pointerctrl->i++){
+        for(pointerctrl->j=0;pointerctrl->j<pointerctrl->numnodes-pointerctrl->i-1;pointerctrl->j++){
             if(pointerctrl->it->num > pointerctrl->it->next->num){
-                swap(pointerctrl->it,pointerctrl->it->next);
+                swapnodes(pointerctrl->it,pointerctrl->it->next);
             }
             pointerctrl->it=pointerctrl->it->next;
         }
@@ -143,45 +143,45 @@ void bubblesort(){
 
 void insertionsort(){
     pointerctrl->it=pointerctrl->head->next;
-    for(pointerctrl->i=1;pointerctrl->i<pointerctrl->numcontatos;pointerctrl->i++){
+    for(pointerctrl->i=1;pointerctrl->i<pointerctrl->numnodes;pointerctrl->i++){
         pointerctrl->j=pointerctrl->i;
         while(pointerctrl->j>0 && pointerctrl->it->prev->num>pointerctrl->it->num){
-            swap(pointerctrl->it->prev,pointerctrl->it);
+            swapnodes(pointerctrl->it->prev,pointerctrl->it);
             pointerctrl->it=pointerctrl->it->prev;
             pointerctrl->j-=1;
         }
     }
 }
 
-void addcontato(){
-    pointerctrl->numcontatos+=1;
+void addnode(){
+    pointerctrl->numnodes+=1;
     reallocbuffer();
-    pointerctrl->newcontato=buffer;
+    pointerctrl->newnode=buffer;
     pointerctrl->temp=pointerctrl->head;
     
     do{
         printf("Nome: ");
-        fgets(pointerctrl->newcontato->name,30,stdin);
-        pointerctrl->newcontato->name[strlen(pointerctrl->newcontato->name)-1]='\0';
-        if(strcmp(pointerctrl->newcontato->name,"\0")==0){
+        fgets(pointerctrl->newnode->name,30,stdin);
+        pointerctrl->newnode->name[strlen(pointerctrl->newnode->name)-1]='\0';
+        if(strcmp(pointerctrl->newnode->name,"\0")==0){
             printf("Nome inválido, digite novamente\n");
         }
-    }while(strcmp(pointerctrl->newcontato->name,"\0")==0);
+    }while(strcmp(pointerctrl->newnode->name,"\0")==0);
     
     printf("Número: ");
-    scanf("%d", &pointerctrl->newcontato->num);
+    scanf("%d", &pointerctrl->newnode->num);
     getchar();
 
     while(pointerctrl->temp->next!=NULL){
         pointerctrl->temp=pointerctrl->temp->next;
     }
-    pointerctrl->temp->next=pointerctrl->newcontato;
-    pointerctrl->newcontato->prev=pointerctrl->temp;
-    pointerctrl->newcontato->next=NULL;
+    pointerctrl->temp->next=pointerctrl->newnode;
+    pointerctrl->newnode->prev=pointerctrl->temp;
+    pointerctrl->newnode->next=NULL;
     pointerctrl->buffersize+=NODE_SIZE;
 }
 
-void remcontato(){
+void rmnode(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
     pointerctrl->it=pointerctrl->it->next;
@@ -191,19 +191,19 @@ void remcontato(){
     while(pointerctrl->it!=NULL){
         if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
             pointerctrl->i=1;
-            pointerctrl->numcontatos-=1;
+            pointerctrl->numnodes-=1;
             pointerctrl->it->prev->next=pointerctrl->it->next;
             if(pointerctrl->it->next!=NULL)pointerctrl->it->next->prev=pointerctrl->it->prev;
             break;
         }
         pointerctrl->it=pointerctrl->it->next;
     }
-    if(pointerctrl->i!=1)printf("Contato não encontrado\n");
+    if(!pointerctrl->i)printf("node não encontrado\n");
     reallocbuffer();
     pointerctrl->buffersize-=NODE_SIZE;
 }
 
-void findcontato(){
+void findnode(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
     pointerctrl->it=pointerctrl->it->next;
@@ -228,22 +228,24 @@ void inithead(){
     pointerctrl->head->prev=NULL;
 }
 
-void printlist(){
-    pointerctrl->temp=pointerctrl->head->next;
-    //pointerctrl->temp=pointerctrl->temp->next;
-    while(pointerctrl->temp!=NULL){
-        printf("Nome: %s\n", pointerctrl->temp->name);
-        printf("Número: %d\n\n", pointerctrl->temp->num);
-        pointerctrl->temp=pointerctrl->temp->next;
-    }
-    /*pointerctrl->temp=pointerctrl->temp->prev;
-    while(pointerctrl->temp!=NULL){
-        printf("Nome: %s\n", pointerctrl->temp->name);
-        printf("Número: %d\n\n", pointerctrl->temp->num);
+void printagenda(){
+    pointerctrl->stack=malloc(sizeof(Stack));
+    pointerctrl->stack->top=malloc(NODE_SIZE);
+    pointerctrl->temp=pointerctrl->head;
+
+    while(pointerctrl->temp->next!=NULL)pointerctrl->temp=pointerctrl->temp->next;
+
+    while(pointerctrl->temp->prev->num!=0){
         pointerctrl->temp=pointerctrl->temp->prev;
-    }*/
-    if(pointerctrl->numcontatos==0)printf("Agenda vazia\n");
-    else printf("Total de contatos: %d\n", pointerctrl->numcontatos);
+        push(pointerctrl->stack,pointerctrl->temp);
+    }
+    
+    while(pointerctrl->stack->top->next!=NULL){
+        printf("Nome: %s\n",pointerctrl->stack->top->name);
+        printf("Número: %d\n",pointerctrl->stack->top->num);
+        pointerctrl->stack->top=pointerctrl->stack->top->next;
+    }
+    //printf("TESTESTE\n\n\n");
 }
 
 void loadtest(){
@@ -251,24 +253,24 @@ void loadtest(){
     int testnum,i;
     char testname[30];
     fp=fopen("test.txt","r");
-    pointerctrl->numcontatos=20;
+    pointerctrl->numnodes=20;
     reallocbuffer();
     for(i=0;i<20;i++){
         fscanf(fp,"%s",testname);
         fscanf(fp,"%d",&testnum);
 
-        pointerctrl->newcontato=buffer;
+        pointerctrl->newnode=buffer;
         pointerctrl->temp=pointerctrl->head;
-        strcpy(pointerctrl->newcontato->name,testname);
-        pointerctrl->newcontato->name[strlen(pointerctrl->newcontato->name)-1]='\0';
-        pointerctrl->newcontato->num=testnum;
+        strcpy(pointerctrl->newnode->name,testname);
+        pointerctrl->newnode->name[strlen(pointerctrl->newnode->name)-1]='\0';
+        pointerctrl->newnode->num=testnum;
         
         while(pointerctrl->temp->next!=NULL){
             pointerctrl->temp=pointerctrl->temp->next;
         }
-        pointerctrl->temp->next=pointerctrl->newcontato;
-        pointerctrl->newcontato->prev=pointerctrl->temp;
-        pointerctrl->newcontato->next=NULL;
+        pointerctrl->temp->next=pointerctrl->newnode;
+        pointerctrl->newnode->prev=pointerctrl->temp;
+        pointerctrl->newnode->next=NULL;
         buffer+=NODE_SIZE;
     }
     pointerctrl->buffersize+=NODE_SIZE*20;
