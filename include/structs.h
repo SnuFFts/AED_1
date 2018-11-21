@@ -22,6 +22,7 @@ typedef struct __attribute__((__packed__)) controle{
     node *head;
     node *newnode;
     node *swaptemp;
+    node *stacktemp;
     node *temp;
     node *it;
     Stack *stack;

@@ -36,6 +36,7 @@ int main(){
     buffer+=NODE_SIZE;
     pointerctrl->numnodes=0;
     pointerctrl->buffersize=CONTROL_BYTES+NODE_SIZE;
+    //pointerctrl->stack->top=pointerctrl->head;
     //loadtest();
     while(pointerctrl->control!=6){
         printf("\n-------------------------------------\n");
@@ -230,22 +231,19 @@ void inithead(){
 
 void printagenda(){
     pointerctrl->stack=malloc(sizeof(Stack));
-    pointerctrl->stack->top=malloc(NODE_SIZE);
     pointerctrl->temp=pointerctrl->head;
-
     while(pointerctrl->temp->next!=NULL)pointerctrl->temp=pointerctrl->temp->next;
 
-    while(pointerctrl->temp->prev->num!=0){
-        pointerctrl->temp=pointerctrl->temp->prev;
+    while(pointerctrl->temp->num!=0){
         push(pointerctrl->stack,pointerctrl->temp);
+        pointerctrl->temp=pointerctrl->temp->prev;
     }
-    
-    while(pointerctrl->stack->top->next!=NULL){
+    while(!isempty(pointerctrl->stack)){
         printf("Nome: %s\n",pointerctrl->stack->top->name);
         printf("Número: %d\n",pointerctrl->stack->top->num);
-        pointerctrl->stack->top=pointerctrl->stack->top->next;
+        pop(pointerctrl->stack);
     }
-    //printf("TESTESTE\n\n\n");
+    //clear(pointerctrl->stack);
 }
 
 void loadtest(){
