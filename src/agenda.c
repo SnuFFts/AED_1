@@ -1,5 +1,5 @@
 #include "structs.h"
-#include "stack.h"
+#include "../include/stack.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,8 +36,9 @@ int main(){
     buffer+=NODE_SIZE;
     pointerctrl->numnodes=0;
     pointerctrl->buffersize=CONTROL_BYTES+NODE_SIZE;
-    //pointerctrl->stack->top=pointerctrl->head;
-    //loadtest();
+    printf("LOAD TEST ?\nPRESS 5 FOR YES\nDON'T ADD NEW NODE IF TEST IS LOADED\n");
+    scanf("%d",&pointerctrl->nodeflag);
+    if(pointerctrl->nodeflag==5)loadtest();
     while(pointerctrl->control!=6){
         printf("\n-------------------------------------\n");
         printf("        1-Adicionar contato\n");
@@ -62,6 +63,7 @@ void reallocbuffer(){
     buffer=pointerctrl->bufferin;
     buffer=realloc(buffer,CONTROL_SIZE+NODE_SIZE*(pointerctrl->numnodes+1));
     pointerctrl=buffer;
+    pointerctrl->stack=malloc(sizeof(Stack));
     pointerctrl->bufferin=buffer;
     buffer+=CONTROL_SIZE;
     pointerctrl->head=buffer;
@@ -172,36 +174,51 @@ void addnode(){
     printf("Número: ");
     scanf("%d", &pointerctrl->newnode->num);
     getchar();
+    pointerctrl->nodeflag=0;
 
     while(pointerctrl->temp->next!=NULL){
         pointerctrl->temp=pointerctrl->temp->next;
+        if(strcmp(pointerctrl->newnode->name,pointerctrl->temp->name)==0){
+            pointerctrl->nodeflag=1;
+            printf("Nome já cadastrado\n");
+        }
+        if(pointerctrl->temp->num==pointerctrl->newnode->num){
+            pointerctrl->nodeflag=1;
+            printf("Número já cadastrado\n");
+        }
     }
-    pointerctrl->temp->next=pointerctrl->newnode;
-    pointerctrl->newnode->prev=pointerctrl->temp;
-    pointerctrl->newnode->next=NULL;
-    pointerctrl->buffersize+=NODE_SIZE;
+
+    pointerctrl->temp=pointerctrl->head;
+    if(!pointerctrl->nodeflag){
+        while(pointerctrl->temp->next!=NULL){
+            pointerctrl->temp=pointerctrl->temp->next;
+        }
+        pointerctrl->temp->next=pointerctrl->newnode;
+        pointerctrl->newnode->prev=pointerctrl->temp;
+        pointerctrl->newnode->next=NULL;
+        pointerctrl->buffersize+=NODE_SIZE;
+    }
 }
 
 void rmnode(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
-    pointerctrl->it=pointerctrl->it->next;
     printf("Nome: ");
     fgets(pointerctrl->temp->name,30,stdin);
     pointerctrl->temp->name[strlen(pointerctrl->temp->name)-1]='\0';
-    while(pointerctrl->it!=NULL){
+    pointerctrl->nodeflag=0;
+    while(pointerctrl->it->next!=NULL){
+        pointerctrl->it=pointerctrl->it->next;
         if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
-            pointerctrl->i=1;
-            pointerctrl->numnodes-=1;
             pointerctrl->it->prev->next=pointerctrl->it->next;
             if(pointerctrl->it->next!=NULL)pointerctrl->it->next->prev=pointerctrl->it->prev;
+            pointerctrl->nodeflag=1;
+            pointerctrl->numnodes-=1;
             break;
         }
-        pointerctrl->it=pointerctrl->it->next;
     }
-    if(!pointerctrl->i)printf("node não encontrado\n");
+    if(!pointerctrl->nodeflag)printf("Contato não encontrado\n");
     reallocbuffer();
-    pointerctrl->buffersize-=NODE_SIZE;
 }
 
 void findnode(){
@@ -230,33 +247,37 @@ void inithead(){
 }
 
 void printagenda(){
-    pointerctrl->stack=malloc(sizeof(Stack));
     pointerctrl->temp=pointerctrl->head;
-    while(pointerctrl->temp->next!=NULL)pointerctrl->temp=pointerctrl->temp->next;
-
-    while(pointerctrl->temp->num!=0){
-        push(pointerctrl->stack,pointerctrl->temp);
-        pointerctrl->temp=pointerctrl->temp->prev;
+    if(pointerctrl->temp->next!=NULL){
+        clear(pointerctrl->stack);
+        while(pointerctrl->temp->next!=NULL)pointerctrl->temp=pointerctrl->temp->next;
+        while(pointerctrl->temp->num!=0){
+            push(pointerctrl->stack,pointerctrl->temp);
+            pointerctrl->temp=pointerctrl->temp->prev;
+        }
+        while(!isempty(pointerctrl->stack)){
+            printf("Nome: %s\n",pointerctrl->stack->top->name);
+            printf("Número: %d\n",pointerctrl->stack->top->num);
+            pop(pointerctrl->stack);
+        }
     }
-    while(!isempty(pointerctrl->stack)){
-        printf("Nome: %s\n",pointerctrl->stack->top->name);
-        printf("Número: %d\n",pointerctrl->stack->top->num);
-        pop(pointerctrl->stack);
-    }
-    //clear(pointerctrl->stack);
+    else printf("Agenda vazia\n");
+    
 }
 
 void loadtest(){
     FILE *fp;
-    int testnum,i;
+    int testnum,iter;
     char testname[30];
     fp=fopen("test.txt","r");
     pointerctrl->numnodes=20;
     reallocbuffer();
-    for(i=0;i<20;i++){
+    for(iter=0;iter<20;iter++){
         fscanf(fp,"%s",testname);
         fscanf(fp,"%d",&testnum);
-
+        
+        //pointerctrl->numnodes+=1;
+        //reallocbuffer();
         pointerctrl->newnode=buffer;
         pointerctrl->temp=pointerctrl->head;
         strcpy(pointerctrl->newnode->name,testname);
@@ -271,5 +292,7 @@ void loadtest(){
         pointerctrl->newnode->next=NULL;
         buffer+=NODE_SIZE;
     }
+    fclose(fp);
     pointerctrl->buffersize+=NODE_SIZE*20;
+    //reallocbuffer();
 }

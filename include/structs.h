@@ -17,7 +17,7 @@ typedef struct __attribute__((__packed__)) controle{
     int control;
     int i;
     int j;
-    int k;
+    int nodeflag;
     int indexit;
     node *head;
     node *newnode;
