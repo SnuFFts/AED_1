@@ -41,15 +41,15 @@ int main(){
     if(pointerctrl->nodeflag==5)loadtest();
     while(pointerctrl->control!=6){
         printf("\n-------------------------------------\n");
-        printf("        1-Adicionar contato\n");
-        printf("        2-Remover contato\n");
-        printf("        3-Buscar contato\n");
-        printf("        4-Listar contatos\n");
-        printf("        5-Ordenar contatos\n");
-        printf("        6-Sair\n");
-        printf("\n        Buffer size: %d\n",pointerctrl->buffersize);
+        printf("        1-Add contact\n");
+        printf("        2-Remove contact\n");
+        printf("        3-Find contact\n");
+        printf("        4-List all\n");
+        printf("        5-Sort\n");
+        printf("        6-Exit\n");
+        printf("\n        Buffer size: %dB\n",pointerctrl->buffersize);
         printf("-------------------------------------\n");
-        printf("Selecione uma opção: ");
+        printf("Option: ");
         scanf("%d", &pointerctrl->control);
         getchar();
         printf("\n");
@@ -95,7 +95,7 @@ void selectmenu(int control){
         case 6: 
             break;
         default: 
-            printf("\nOpção não encontrada\n");
+            printf("\nOption not found\n");
     }
 }
 
@@ -113,7 +113,7 @@ void algorithmsmenu(){
         case 3:
             break;
         default: 
-            printf("\nOpção não encontrada\n");
+            printf("\nOption not found\n");
     }
 }
 
@@ -163,28 +163,30 @@ void addnode(){
     pointerctrl->temp=pointerctrl->head;
     
     do{
-        printf("Nome: ");
+        pointerctrl->nodeflag=0;
+        printf("Name: ");
         fgets(pointerctrl->newnode->name,30,stdin);
         pointerctrl->newnode->name[strlen(pointerctrl->newnode->name)-1]='\0';
         if(strcmp(pointerctrl->newnode->name,"\0")==0){
-            printf("Nome inválido, digite novamente\n");
+            printf("Invalid name, try again\n");
+            pointerctrl->nodeflag=1;
         }
-    }while(strcmp(pointerctrl->newnode->name,"\0")==0);
+    }while(pointerctrl->nodeflag==1);
     
-    printf("Número: ");
+    printf("Number: ");
     scanf("%d", &pointerctrl->newnode->num);
     getchar();
-    pointerctrl->nodeflag=0;
 
+    pointerctrl->nodeflag=0;
     while(pointerctrl->temp->next!=NULL){
         pointerctrl->temp=pointerctrl->temp->next;
         if(strcmp(pointerctrl->newnode->name,pointerctrl->temp->name)==0){
             pointerctrl->nodeflag=1;
-            printf("Nome já cadastrado\n");
+            printf("Name already exists\n");
         }
         if(pointerctrl->temp->num==pointerctrl->newnode->num){
             pointerctrl->nodeflag=1;
-            printf("Número já cadastrado\n");
+            printf("Number already exists\n");
         }
     }
 
@@ -203,21 +205,29 @@ void addnode(){
 void rmnode(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
-    printf("Nome: ");
+    printf("Name: ");
     fgets(pointerctrl->temp->name,30,stdin);
     pointerctrl->temp->name[strlen(pointerctrl->temp->name)-1]='\0';
     pointerctrl->nodeflag=0;
-    while(pointerctrl->it->next!=NULL){
-        pointerctrl->it=pointerctrl->it->next;
-        if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
-            pointerctrl->it->prev->next=pointerctrl->it->next;
-            if(pointerctrl->it->next!=NULL)pointerctrl->it->next->prev=pointerctrl->it->prev;
-            pointerctrl->nodeflag=1;
-            pointerctrl->numnodes-=1;
-            break;
+    if(pointerctrl->numnodes==1){
+        pointerctrl->it->next=NULL;
+        pointerctrl->nodeflag=1;
+        pointerctrl->numnodes-=1;
+    }
+    else{
+        while(pointerctrl->it->next!=NULL){
+            pointerctrl->it=pointerctrl->it->next;
+            if(strcmp(pointerctrl->temp->name,pointerctrl->it->name)==0){
+                pointerctrl->it->prev->next=pointerctrl->it->next;
+                if(pointerctrl->it->next!=NULL)pointerctrl->it->next->prev=pointerctrl->it->prev;
+                pointerctrl->nodeflag=1;
+                pointerctrl->numnodes-=1;
+                break;
+            }
         }
     }
-    if(!pointerctrl->nodeflag)printf("Contato não encontrado\n");
+    if(!pointerctrl->nodeflag)printf("Name not found\n");
+    else pointerctrl->buffersize-=NODE_SIZE;
     reallocbuffer();
 }
 
@@ -225,7 +235,7 @@ void findnode(){
     pointerctrl->temp=malloc(NODE_SIZE);
     pointerctrl->it=pointerctrl->head;
     pointerctrl->it=pointerctrl->it->next;
-    printf("Nome: ");
+    printf("Name: ");
     fgets(pointerctrl->temp->name,30,stdin);
     pointerctrl->temp->name[strlen(pointerctrl->temp->name)-1]='\0';
     while(pointerctrl->it!=NULL){
@@ -256,12 +266,12 @@ void printagenda(){
             pointerctrl->temp=pointerctrl->temp->prev;
         }
         while(!isempty(pointerctrl->stack)){
-            printf("Nome: %s\n",pointerctrl->stack->top->name);
-            printf("Número: %d\n",pointerctrl->stack->top->num);
+            printf("Name: %s\n",pointerctrl->stack->top->name);
+            printf("Number: %d\n",pointerctrl->stack->top->num);
             pop(pointerctrl->stack);
         }
     }
-    else printf("Agenda vazia\n");
+    else printf("Empty\n");
     
 }
 
